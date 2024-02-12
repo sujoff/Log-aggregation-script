@@ -2,9 +2,12 @@
 
 In this project, I have created bash script to parse the randomly logged xml contents based on <ops_audit> and <ops_history> tag.  
 
+Project Link is available [Here](https://www.upwork.com/jobs/~01783b978ed4ad3906).
+
+
 ## Requirement
 
-To parse contents without using any xml specific linux packages like xmlstarlet or xmllint.
+To parse contents without using XML-specific linux packages i.e xmlstarlet, xmllint and so on.
 
 ## Solution
 
