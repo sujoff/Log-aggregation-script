@@ -8,6 +8,7 @@ Project Link is available [Here](https://www.upwork.com/jobs/~01783b978ed4ad3906
 ## Requirement
 
 To parse contents without using XML-specific linux packages i.e xmlstarlet, xmllint and so on.
+Formatted logs shoule be easier to be skimmed in Sumo.
 
 ## Solution
 
