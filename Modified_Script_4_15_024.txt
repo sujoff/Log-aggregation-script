@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Ask user for the type of files
+read -p "If you're working on Audit files type A/a, If you're working on History files, type H/h: " file_type
+
+# Convert input to lowercase for case-insensitive comparison
+file_type=$(echo "$file_type" | tr '[:upper:]' '[:lower:]')
+
+# Determine the prefix for output folder based on input
+if [ "$file_type" = "a" ]; then
+    output_folder="formatted_output_audit_$(date +%Y-%m-%d)"
+elif [ "$file_type" = "h" ]; then
+    output_folder="formatted_output_history_$(date +%Y-%m-%d)"
+else
+    echo "Invalid input. Please type 'A' for Audit files or 'H' for History files."
+    exit 1
+fi
+
+# Create folder in the current directory
+mkdir -p "$output_folder"
+
+# Create log file
+log_file="$output_folder/log.txt"
+touch "$log_file"
+
+# Initialize counter for formatted files
+formatted_files_count=0
+
+# Loop through subdirectories for XML files
+find . -type f -name '*.xml' -print0 | while IFS= read -r -d '' input_file; do
+    # Extract the filename without the extension
+    filename=$(basename -- "$input_file")
+    filename_no_ext="${filename%.*}"
+
+    # Define the output file path
+    output_file="$output_folder/formatter_${filename_no_ext}.xml"
+
+    # Process file using sed to insert newline before <ops_audit> or <ops_history> tags
+    sed_output=$(sed -E 's/<ops_audit>/\n<ops_audit>/g; s/<ops_history>/\n<ops_history>/g' "$input_file")
+
+    # Check if sed operation was successful
+    if [ $? -eq 0 ]; then
+        echo "$sed_output" > "$output_file"
+        echo "Formatted content of $filename saved to $output_file" >> "$log_file"
+        ((formatted_files_count++))
+    else
+        echo "Error: Unable to format $filename. Skipping." >> "$log_file"
+    fi
+
+    # Check if input file was empty
+    if [ -s "$input_file" ]; then
+        echo "No any text in $filename." >> "$log_file"
+    fi
+
+done
+
+# Put & Print number of formatted files to log file
+echo "Total formatted files: $formatted_files_count" >> "$log_file"
+
+# Echo log file location to screen
+echo "Output saved to: $output_folder/log.txt"
